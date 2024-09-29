@@ -1,0 +1,75 @@
+import random
+import base64
+from IPython.display import display, HTML
+
+
+# Se definen los palos y las cartas
+palos = ["hearts", "diamonds", "spades", "clubs"]
+cartas = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"]
+
+# Diccionario de traducción para los palos y las figuras al español
+#dado que las imagenes venian en idioma ingles, pero quiero dar la respuesta en español
+traduccion_palos = {
+    "hearts": "corazones",
+    "diamonds": "diamantes",
+    "spades": "picas",
+    "clubs": "tréboles"
+}
+
+traduccion_cartas = {
+    "ace": "As",
+    "jack": "Jota",
+    "queen": "Reina",
+    "king": "Rey",
+}
+
+
+# Parte 1: Cargar imágenes 
+
+html_images = []  
+
+def cargar_imagenes():
+    global html_images
+    for palo in palos:
+        for valor in cartas:
+            nombre_imagen = f"{valor}_of_{palo}.png"
+            ruta_imagen = f"/content/{nombre_imagen}"  
+
+            try:
+                with open(ruta_imagen, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                    html_images.append((f"{valor}_of_{palo}", f"data:image/png;base64,{encoded_string}"))
+            except FileNotFoundError:
+                print(f"Imagen no encontrada: {ruta_imagen}")
+
+
+# Parte 2: Función para seleccionar una carta aleatoriamente
+
+def seleccionar_carta():
+    # Seleccionar aleatoriamente un palo
+    indice_palo = random.randint(0, len(palos) - 1)
+    palo_seleccionado = palos[indice_palo]
+
+    # Seleccionar aleatoriamente una figura
+    indice_figura = random.randint(0, len(cartas) - 1)
+    figura_seleccionada = cartas[indice_figura]
+
+    # Traducir el palo y la carta al español para mostrar
+    figura_en_espanol = traduccion_cartas.get(figura_seleccionada, figura_seleccionada)
+    palo_en_espanol = traduccion_palos[palo_seleccionado]
+
+    # Mostrar la selección de carta en español
+    print(f"Se ha seleccionado la carta: {figura_en_espanol} de {palo_en_espanol}")
+
+    # Mostrar la imagen directamente en el código usando HTML
+    for nombre, imagen_data in html_images:
+        if nombre == f"{figura_seleccionada}_of_{palo_seleccionado}":
+            display(HTML(f'<img src="{imagen_data}" width="100" height="140"/>'))
+            break
+
+
+# Para cargar las imágenes se usa la funcion:
+cargar_imagenes()
+
+# Luego, para seleccionar una cartas se usa la funcion:
+seleccionar_carta()
